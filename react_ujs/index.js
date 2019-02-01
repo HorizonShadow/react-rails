@@ -21,6 +21,8 @@ var ReactRailsUJS = {
   // If jQuery is detected, save a reference to it for event handlers
   jQuery: (typeof window !== 'undefined') && (typeof window.jQuery !== 'undefined') && window.jQuery,
 
+  components: [],
+
   // helper method for the mount and unmount methods to find the
   // `data-react-class` DOM elements
   findDOMNodes: function(searchSelector) {
@@ -94,11 +96,15 @@ var ReactRailsUJS = {
         }
         throw new Error(message + ". Make sure your component is available to render.")
       } else {
-        if (hydrate && typeof ReactDOM.hydrate === "function") {
-          ReactDOM.hydrate(React.createElement(constructor, props), node);
-        } else {
-          ReactDOM.render(React.createElement(constructor, props), node);
+        if(!this.components.includes(node)) {
+          this.components.push(node);
+          if (hydrate && typeof ReactDOM.hydrate === "function") {
+            ReactDOM.hydrate(React.createElement(constructor, props), node);
+          } else {
+            ReactDOM.render(React.createElement(constructor, props), node);
+          }
         }
+        
       }
     }
   },
